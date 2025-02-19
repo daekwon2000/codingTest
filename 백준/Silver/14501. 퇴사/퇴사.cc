@@ -1,54 +1,28 @@
-#include<iostream>
-#include<algorithm>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
+int n;
+int term[16], price[16], d[16];
+
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
 
-	int n = 0;
-	cin >> n;
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cin >> term[i] >> price[i];
+    }
 
-	int term[20] = {};
-	int price[20] = {};
-	int d[20] = {};
+    // DP 테이블 갱신
+    for (int i = n; i >= 1; i--) {
+        if (i + term[i] > n + 1) {  // 상담이 퇴사일을 넘으면
+            d[i] = d[i + 1];  // 그날 상담을 하지 않음
+        } else {
+            d[i] = max(d[i + term[i]] + price[i], d[i + 1]);
+        }
+    }
 
-	for (int i = 1; i <= n; i++) {
-		cin >> term[i] >> price[i];
-	}
-
-	for (int i = n; i >= 1; i--) {
-		// 남은 기간동안 일을 처리할 수 없는 경우.
-		if (term[i] > n - i + 1) {
-			// 그날로부터는 돈을 벌 수 없다.
-			d[i] = 0;
-		}
-		else {
-			d[i] = price[i];
-		}
-	}
-
-	//for (int i = 1; i <= n; i++) {
-	//	cout << d[i] << " ";
-	//}
-	//cout << "\n";
-
-	for (int i = n; i >= 1; i--) {
-		for (int j = n; j > i; j--) {
-			if (term[i] > n - i + 1) {
-				d[i] = max(d[i], d[j]);
-				continue;
-			}
-
-			d[i] = max(d[i + term[i]] + price[i], d[j]);
-		}
-	}
-
-	//for (int i = 1; i <= n; i++) {
-	//	cout << d[i] << " ";
-	//}
-	//cout << "\n";
-
-	cout << *max_element(d + 1, d + n + 1) << "\n";
+    cout << d[1] << "\n";  // 첫째 날부터 시작할 때의 최대 이익 출력
 }
